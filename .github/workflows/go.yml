@@ -33,6 +33,6 @@ jobs:
         # Artifact name
         name: Sitemongoose
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./sitemongoose(.exe)?
+        path: sitemongoose(.exe)?
 
           
