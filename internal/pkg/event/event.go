@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"maps"
+	"regexp"
 	"slices"
 	"strings"
 
@@ -97,7 +98,7 @@ func (e *Event) Validate() (bool, error) {
 		if !validJSONRuleConditions[e.JSONRule.Condition] {
 			return false, errors.New("condition must be one of " + strings.Join(slices.Collect(maps.Keys(validJSONRuleConditions)), ", "))
 		}
-		// The "valid" rule does not require a JSONPath or Value
+		// The "valid" condition does not require a JSONPath or Value
 		if e.JSONRule.Condition != JSON_RULE_VALID {
 			if e.JSONRule.JSONPath == "" {
 				return false, errors.New("json_path is required")
@@ -105,6 +106,18 @@ func (e *Event) Validate() (bool, error) {
 
 			if e.JSONRule.Value == "" {
 				return false, errors.New("value is required")
+			}
+		}
+		// "lt" and "gt" conditions require a number value
+		if e.JSONRule.Condition == JSON_RULE_LESS_THAN || e.JSONRule.Condition == JSON_RULE_GREATER_THAN {
+			if gjson.Parse(e.JSONRule.Value).Type != gjson.Number {
+				return false, errors.New("value must be a number")
+			}
+		}
+		if e.JSONRule.Condition == JSON_RULE_REGEXP {
+			_, err := regexp.Compile(e.JSONRule.Value)
+			if err != nil {
+				return false, errors.New("value must be a valid regular expression")
 			}
 		}
 	}
@@ -189,6 +202,9 @@ func evaluateCondition(value gjson.Result, condition string, expectedValue strin
 		return value.Float() <= gjson.Parse(expectedValue).Float()
 	case JSON_RULE_LESS_THAN:
 		return value.Float() >= gjson.Parse(expectedValue).Float()
+	case JSON_RULE_REGEXP:
+		matched, err := regexp.Match(expectedValue, []byte(valueAsString))
+		return !(matched && err == nil)
 	default:
 		return false
 	}
