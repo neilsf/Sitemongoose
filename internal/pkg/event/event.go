@@ -94,14 +94,18 @@ func (e *Event) Validate() (bool, error) {
 		if e.JSONRule == nil {
 			return false, errors.New("json_rule is required")
 		}
-		if e.JSONRule.JSONPath == "" {
-			return false, errors.New("json_path is required")
-		}
 		if !validJSONRuleConditions[e.JSONRule.Condition] {
 			return false, errors.New("condition must be one of " + strings.Join(slices.Collect(maps.Keys(validJSONRuleConditions)), ", "))
 		}
-		if e.JSONRule.Value == "" {
-			return false, errors.New("value is required")
+		// The "valid" rule does not require a JSONPath or Value
+		if e.JSONRule.Condition != JSON_RULE_VALID {
+			if e.JSONRule.JSONPath == "" {
+				return false, errors.New("json_path is required")
+			}
+
+			if e.JSONRule.Value == "" {
+				return false, errors.New("value is required")
+			}
 		}
 	}
 	return true, nil
