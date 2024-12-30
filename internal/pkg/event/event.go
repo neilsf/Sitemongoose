@@ -25,6 +25,7 @@ var validTriggerTypes = map[string]bool{
 }
 
 const (
+	JSON_RULE_VALID        = "valid"
 	JSON_RULE_EXISTS       = "exists"
 	JSON_RULE_EQUALS       = "eq"
 	JSON_RULE_NOT_EQUAL    = "ne"
@@ -34,6 +35,7 @@ const (
 )
 
 var validJSONRuleConditions = map[string]bool{
+	JSON_RULE_VALID:        true,
 	JSON_RULE_EXISTS:       true,
 	JSON_RULE_EQUALS:       true,
 	JSON_RULE_NOT_EQUAL:    true,
@@ -139,7 +141,11 @@ func (e *Event) checkResponseTime(responseTimeMS int) {
 
 func (e *Event) checkJSONRule(bodyBytes []byte) {
 	if !gjson.ValidBytes(bodyBytes) {
-		log.Print("Error: Response is not valid JSON\n")
+		if e.JSONRule.Condition == JSON_RULE_VALID {
+			e.dispatch(true)
+		} else {
+			log.Print("Error: Response is not valid JSON\n")
+		}
 	}
 	value := gjson.Get(string(bodyBytes), e.JSONRule.JSONPath)
 	if value.Exists() {
@@ -172,13 +178,13 @@ func evaluateCondition(value gjson.Result, condition string, expectedValue strin
 	valueAsString := getValueAsString(value)
 	switch condition {
 	case JSON_RULE_EQUALS:
-		return valueAsString == expectedValue
-	case JSON_RULE_NOT_EQUAL:
 		return valueAsString != expectedValue
+	case JSON_RULE_NOT_EQUAL:
+		return valueAsString == expectedValue
 	case JSON_RULE_GREATER_THAN:
-		return value.Float() > gjson.Parse(expectedValue).Float()
+		return value.Float() <= gjson.Parse(expectedValue).Float()
 	case JSON_RULE_LESS_THAN:
-		return value.Float() < gjson.Parse(expectedValue).Float()
+		return value.Float() >= gjson.Parse(expectedValue).Float()
 	default:
 		return false
 	}
