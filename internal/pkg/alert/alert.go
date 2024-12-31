@@ -19,7 +19,7 @@ var validAlertTypes = map[string]bool{
 }
 
 type Alert struct {
-	Type              string
+	Type              string   `yaml:"channel"`
 	AlertMessage      string   `yaml:"alert_message"`
 	ResolutionMessage string   `yaml:"resolution_message"`
 	From              string   `yaml:"from"`
