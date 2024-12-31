@@ -37,11 +37,19 @@ func (m *MonitorService) GetMonitors() []Monitor {
 }
 
 func (ms *MonitorService) Start() {
-	var monitorChannels = make(map[string]<-chan time.Time)
+	monitorChannels := ms.createMonitorChannels()
+	ms.runMonitorLoop(monitorChannels)
+}
+
+func (ms *MonitorService) createMonitorChannels() map[string]<-chan time.Time {
+	monitorChannels := make(map[string]<-chan time.Time)
 	for _, monitor := range ms.monitors {
 		monitorChannels[monitor.Name] = time.Tick(time.Duration(monitor.IntervalSec) * time.Second)
 	}
+	return monitorChannels
+}
 
+func (ms *MonitorService) runMonitorLoop(monitorChannels map[string]<-chan time.Time) {
 	log.Printf("Starting monitoring service with %d monitors\n", len(ms.monitors))
 
 	cases := make([]reflect.SelectCase, len(monitorChannels))

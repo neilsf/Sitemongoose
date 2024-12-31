@@ -63,6 +63,11 @@ func validateConfig() {
 			if ok, err := event.Validate(); !ok {
 				log.Fatalf("Invalid event configuration: %s", err.Error())
 			}
+			for _, alert := range event.Alerts {
+				if ok, err := alert.Validate(); !ok {
+					log.Fatalf("Invalid alert configuration: %s", err.Error())
+				}
+			}
 		}
 	}
 }

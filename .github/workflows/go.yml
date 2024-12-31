@@ -14,7 +14,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-13]
+        os: [ubuntu-latest, macos-13]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
@@ -24,18 +24,5 @@ jobs:
       with:
         go-version: '1.23.4'
 
-    - name: Create a build directory
-      run: mkdir build
-
-    - name: Build
-      run: go build -ldflags="-s -w" -o build/sitemongoose cmd/sitemongoose/main.go
-      
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.5.0
-      with:
-        # Artifact name
-        name: Sitemongoose-${{ matrix.os }}
-        # A file, directory or wildcard pattern that describes what to upload
-        path: build/sitemongoose*
-
-          
+    - name: Test
+      run: go test ./...
