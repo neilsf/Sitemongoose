@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -14,9 +15,11 @@ import (
 const APP_VERSION = "0.1.0"
 
 var app struct {
-	ConfigFilePath string `type:"existingfile" name:"config-file" help:"The path to the configuration file, including the filename." short:"c" default:"config.yaml"`
-	Start          struct {
+	Start struct {
+		ConfigFilePath string `type:"existingfile" name:"config-file" help:"The path to the configuration file, including the filename." short:"c" default:"config.yaml"`
 	} `cmd:"" help:"Starts monitoring." default:"1"`
+	Version struct {
+	} `cmd:"" help:"Prints the program version."`
 }
 
 var appConfig struct {
@@ -74,15 +77,17 @@ func validateConfig() {
 
 func main() {
 	ctx := kong.Parse(&app, kong.Name("sitemongoose"), kong.Description("A simple website monitoring tool (version: ${version})"), kong.Vars{"version": APP_VERSION})
-	readConfig(app.ConfigFilePath)
-	validateConfig()
 	switch ctx.Command() {
 	case "start":
+		readConfig(app.Start.ConfigFilePath)
+		validateConfig()
 		moni := monitor.GetService()
 		for _, m := range appConfig.Monitors {
 			moni.AddMonitor(m)
 		}
 		moni.Start()
+	case "version":
+		fmt.Println(APP_VERSION)
 	default:
 		panic(ctx.Command())
 	}
