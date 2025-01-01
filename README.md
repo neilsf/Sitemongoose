@@ -65,7 +65,7 @@ To start monitoring, invoke Sitemongoose's start command and specify the locatio
 
 In a production environment, you may want to run it as a service, using [systemd](https://systemd.io/) or [Supervisor](https://supervisord.org/).
 
-## Full Config Specification
+## Complete Configuration Reference
 
 A Sitemongoose configuration consists of three main building blocks:
 
