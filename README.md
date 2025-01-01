@@ -253,6 +253,6 @@ monitors:
         expected_status_code: 200
         alerts:
           - channel: command
-            alert_command: ["notify-send", "-a 'Sitemongoose'", "Example.com is down!"]
-            resolution_command: ["notify-send", "-a 'Sitemongoose'", "Example.com back online"]
+            alert_command: ["notify-send", "-a", "Sitemongoose", "Example.com is down!"]
+            resolution_command: ["notify-send", "-a", "Sitemongoose", "Example.com back online"]
 ```
