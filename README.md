@@ -202,6 +202,20 @@ monitors:
             alert_message: "The number of database connections is above 300"
             resolution_message: "The number of database connections is back to normal"
 ```
+
+#### Slack Alerts
+
+Sitemongoose can send alerts to Slack using [webhooks](https://api.slack.com/messaging/webhooks). All you need to do is set up a webhook and store the webhook URL in the `SLACK_WEBHOOK_URL` environment variable.
+
+For `channel: slack`, the following values are additionally required:
+
+- `alert_message` (mandatory): the message to send when the _Alert_ is fired
+- `resolution_message` (mandatory): the message to send when the _Event_ is no longer active
+
+Additionally, the following environment variable must be send to be able to send out emails:
+
+- `SLACK_WEBHOOK_URL`
+
 #### Pushover Alerts
 
 [Pushover](https://pushover.net/) is a service that you can use to send push messages to your Android phone or iPhone. Sitemongoose supports Pushover integration out of the box.
