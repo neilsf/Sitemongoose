@@ -45,6 +45,8 @@ func GetAlerter(alert Alert) IAlerter {
 		return &CmdAlerter{alert}
 	case ALERT_TYPE_PUSHOVER:
 		return &PushoverAlerter{alert, &LivePushoverSender{}}
+	case ALERT_TYPE_SLACK:
+		return &SlackAlerter{alert, &LiveSlackSender{}}
 	}
 	return nil
 }
