@@ -15,7 +15,9 @@ Sitemongoose is a simple, lightweight and zero-dependency site monitoring tool w
 
 Sitemongoose is a single binary executable without any dependencies. Just download, extract and mark it as executable:
 
-    wget https://github.com/neilsf/sitemongoose/???
+    wget https://github.com/neilsf/sitemongoose/releases/download/v0.1.0/sitemongoose-0.1.0_linux_x86_64.tar.gz
+    tar -xzvf sitemongoose-0.1.0_linux_x86_64.tar.gz
+    rm sitemongoose-0.1.0_linux_x86_64.tar.gz
     chmod +x sitemongoose
     ./sitemongoose --help
 
